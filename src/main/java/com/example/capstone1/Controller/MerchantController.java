@@ -22,12 +22,11 @@ public class MerchantController {
 
     @PostMapping("/add")
     public ResponseEntity addMerchant(@RequestBody @Valid Merchant merchant, Errors errors){
-        String condition = merchantService.addMerchant(merchant,errors);
-        return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
-            case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant added: "+merchant));
-            default -> throw new IllegalStateException("Unexpected value: " + condition);
-        };
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+        }
+        merchantService.addMerchant(merchant);
+        return ResponseEntity.status(200).body(new ApiResponse("merchant added: "+merchant));
     }
 
     @GetMapping("/merchants")
@@ -40,9 +39,11 @@ public class MerchantController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateMerchant(@PathVariable String id, @RequestBody @Valid Merchant merchant, Errors errors){
-        String condition = merchantService.updateMerchant(id,merchant,errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+        }
+        String condition = merchantService.updateMerchant(id,merchant);
         return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
             case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant updated: "+id+" "+merchant));
             case "2" -> ResponseEntity.status(400).body(new ApiResponse("merchant not found: "+ id));
             default -> throw new IllegalStateException("Unexpected value: " + condition);

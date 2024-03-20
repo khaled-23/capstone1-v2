@@ -12,11 +12,7 @@ import java.util.ArrayList;
 public class ProductService {
     ArrayList<Product> products = new ArrayList<>();
     private final CategoryService categoryService;
-    public String addProduct(Product product, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
-
+    public String addProduct(Product product){
         boolean doesCategoryExist = categoryService.doesCategoryExist(product.getCategoryId());
         if(!doesCategoryExist){
             return "2";
@@ -29,11 +25,7 @@ public class ProductService {
         return products;
     }
 
-    public String updateProduct(String id, Product product, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
-
+    public String updateProduct(String id, Product product){
         boolean doesCategoryExist = categoryService.doesCategoryExist(product.getCategoryId());
         if(!doesCategoryExist){
             return "2";

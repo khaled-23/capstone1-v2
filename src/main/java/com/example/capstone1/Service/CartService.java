@@ -1,10 +1,9 @@
 package com.example.capstone1.Service;
 
-import com.example.capstone1.ApiResponse.ApiResponse;
 import com.example.capstone1.Model.Cart;
 import com.example.capstone1.Model.Product;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

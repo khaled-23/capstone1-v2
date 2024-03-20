@@ -16,10 +16,7 @@ public class MerchantStockService {
     private final MerchantService merchantService;
     private final ProductService productService;
 
-    public String addMerchantStock(MerchantStock merchantStock, Errors errors){
-        if(errors.hasErrors()){
-            return errors.getFieldError().getDefaultMessage();
-        }
+    public String addMerchantStock(MerchantStock merchantStock){
         boolean doesMerchantExists = merchantService.doesMerchantExists(merchantStock.getMerchantId());
         if(!doesMerchantExists){
             return "0";
@@ -36,10 +33,7 @@ public class MerchantStockService {
         return merchantStocks;
     }
 
-    public String updateMerchantStock(String id, MerchantStock merchantStock, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
+    public String updateMerchantStock(String id, MerchantStock merchantStock){
         for(int i=0; i<merchantStocks.size(); i++){
             if(merchantStocks.get(i).getId().equalsIgnoreCase(id)){
                 merchantStocks.set(i,merchantStock);

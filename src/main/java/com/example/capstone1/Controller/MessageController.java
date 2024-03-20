@@ -19,13 +19,11 @@ public class MessageController {
 
     @PostMapping("/send")
     public ResponseEntity sendMessage(@RequestBody @Valid Message message, Errors errors){
-
-        String condition = messageService.sendMessage(message,errors);
-        return switch (condition) {
-            case "0" -> ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
-            case "1" -> ResponseEntity.status(200).body(new ApiResponse("message sent"));
-            default -> throw new IllegalStateException("Unexpected value: " + condition);
-        };
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+        }
+        messageService.sendMessage(message);
+        return ResponseEntity.status(200).body(new ApiResponse("message sent"));
     }
 
     @GetMapping("/view/{receiverId}/{senderId}")

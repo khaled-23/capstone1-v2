@@ -21,9 +21,11 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity addProduct(@RequestBody @Valid Product product, Errors errors){
-        String condition = productService.addProduct(product, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+        }
+        String condition = productService.addProduct(product);
         return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
             case "1" -> ResponseEntity.status(200).body(new ApiResponse("product added: "+product));
             case "2" -> ResponseEntity.status(400).body(new ApiResponse("category does not exists"));
             default -> throw new IllegalStateException("Unexpected value: " + condition);
@@ -40,9 +42,11 @@ public class ProductController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateProduct(@PathVariable String id, @RequestBody @Valid Product product,Errors errors){
-        String condition = productService.updateProduct(id, product, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+        }
+        String condition = productService.updateProduct(id, product);
         return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
             case "1" -> ResponseEntity.status(200).body(new ApiResponse("product: "+id+" updated"));
             case "2" -> ResponseEntity.status(400).body(new ApiResponse("category does not exists"));
             case "3" -> ResponseEntity.status(400).body(new ApiResponse("product with id:"+id+" not found"));

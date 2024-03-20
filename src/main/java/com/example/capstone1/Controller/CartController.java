@@ -38,7 +38,7 @@ public class CartController {
     public ResponseEntity removeFromCart(@PathVariable String userId, @PathVariable String merchantId, @PathVariable String productId){
        String condition = cartService.removeFromCart(userId,merchantId,productId);
          return switch (condition) {
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse("error"));
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse("not found"));
             case "1" -> ResponseEntity.status(200).body(new ApiResponse("item removed"));
             default -> throw new IllegalStateException("Unexpected value: " + condition);
         };

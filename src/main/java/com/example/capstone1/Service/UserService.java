@@ -1,15 +1,12 @@
 package com.example.capstone1.Service;
 
 
-import com.example.capstone1.ApiResponse.ApiResponse;
 import com.example.capstone1.Model.Product;
 import com.example.capstone1.Model.User;
 import com.example.capstone1.Model.UserOrder;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,22 +21,15 @@ public class UserService {
     ArrayList<User> users = new ArrayList<>();
 
 
-    public String addUser(User user, Errors errors){
-        if(errors.hasErrors()){
-            return"0";
-        }
+    public void addUser(User user){
         users.add(user);
-        return "1";
     }
 
     public ArrayList<User> getUsers() {
         return users;
     }
 
-    public String updateUser(String id, User user, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
+    public String updateUser(String id, User user){
         for(int i=0; i<users.size(); i++){
             if(users.get(i).getId().equalsIgnoreCase(id)){
                 users.set(i,user);

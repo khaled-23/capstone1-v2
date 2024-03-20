@@ -11,13 +11,9 @@ import java.util.ArrayList;
 public class MessageService {
     ArrayList<Message> messages = new ArrayList<>();
 
-    public String sendMessage(Message message, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
+    public void sendMessage(Message message){
         message.setDateTime(LocalDateTime.now());
         messages.add(message);
-        return "1";
     }
 
     public ArrayList<Message> getMessages(String receiverId, String senderId) {

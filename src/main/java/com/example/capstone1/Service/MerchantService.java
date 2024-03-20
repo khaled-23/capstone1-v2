@@ -15,21 +15,14 @@ public class MerchantService {
 
 
 
-    public String addMerchant(Merchant merchant, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
+    public void addMerchant(Merchant merchant){
         merchants.add(merchant);
-        return "1";
     }
     public ArrayList<Merchant> getMerchants(){
         return merchants;
     }
 
-    public String updateMerchant(String id, Merchant merchant, Errors errors){
-        if(errors.hasErrors()){
-            return "0";
-        }
+    public String updateMerchant(String id, Merchant merchant){
         for(int i=0; i<merchants.size(); i++){
             if(merchants.get(i).getId().equalsIgnoreCase(id)){
                 merchants.set(i,merchant);

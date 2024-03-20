@@ -20,10 +20,7 @@ public class CouponService {
         return coupons;
     }
 
-    public String addCoupon(Coupon coupon, String merchantId, String productId, Errors errors) {
-        if(errors.hasErrors()){
-            return "0";//errors
-        }
+    public String addCoupon(Coupon coupon, String merchantId, String productId) {
         boolean doesMerchantAndProductExists = merchantStockService.doesMerchantAndProductExists(merchantId, productId);
         if(!doesMerchantAndProductExists){
             return "1";//merchant doesn't exists

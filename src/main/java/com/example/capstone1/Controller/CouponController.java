@@ -21,9 +21,11 @@ public class CouponController {
     @PostMapping("/add/{merchantId}/{productId}")
     public ResponseEntity addCoupon(@PathVariable String merchantId, @PathVariable String productId
             ,@RequestBody @Valid Coupon coupon, Errors errors){
-        String condition = couponService.addCoupon(coupon, merchantId ,productId, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+        }
+        String condition = couponService.addCoupon(coupon, merchantId ,productId);
         return switch (condition) {
-            case "0" -> ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
             case "1" -> ResponseEntity.status(400).body(new ApiResponse("merchantStock doesn't exists"));
             default -> ResponseEntity.status(200).body(new ApiResponse("coupon added"));
         };

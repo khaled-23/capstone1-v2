@@ -23,12 +23,12 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity addUser(@RequestBody @Valid User user, Errors errors){
-        String condition = userService.addUser(user, errors);
-        return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
-            case "1" -> ResponseEntity.status(200).body(new ApiResponse("user added"));
-            default -> throw new IllegalStateException("Unexpected value: " + condition);
-        };
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+        }
+        userService.addUser(user);
+            return ResponseEntity.status(200).body(new ApiResponse("user added"));
+
     }
 
     @GetMapping("/users")
@@ -41,9 +41,11 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateUser(@PathVariable String id, @RequestBody @Valid User user, Errors errors){
-        String condition = userService.updateUser(id,user, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+        }
+        String condition = userService.updateUser(id,user);
         return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
             case "1" -> ResponseEntity.status(200).body(new ApiResponse("user is updated: "+id));
             case "2" -> ResponseEntity.status(400).body(new ApiResponse("user not found"));
             default -> throw new IllegalStateException("Unexpected value: " + condition);

@@ -20,9 +20,11 @@ public class MerchantStockController {
 
     @PostMapping("/add")
     public ResponseEntity addMerchantStock(@RequestBody @Valid MerchantStock merchantStock, Errors errors){
-       String condition = merchantStockService.addMerchantStock(merchantStock, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse("merchant does not exists"));
+        }
+       String condition = merchantStockService.addMerchantStock(merchantStock);
        return switch (condition){
-           case "0" -> ResponseEntity.status(400).body(new ApiResponse("merchant does not exists"));
            case "1" -> ResponseEntity.status(400).body(new ApiResponse("product does not exists"));
            case "2" -> ResponseEntity.status(200).body(new ApiResponse("Merchant stock created"));
            default -> ResponseEntity.status(400).body(new ApiResponse(condition));
@@ -40,9 +42,11 @@ public class MerchantStockController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateMerchantStock(@PathVariable String id, @RequestBody @Valid MerchantStock merchantStock, Errors errors){
-        String condition = merchantStockService.updateMerchantStock(id,merchantStock, errors);
+        if(errors.hasErrors()){
+            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+        }
+        String condition = merchantStockService.updateMerchantStock(id,merchantStock);
         return switch (condition){
-            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
             case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant stock updated"));
             case "2" -> ResponseEntity.status(400).body(new ApiResponse("merchant stock not found"));
             default -> throw new IllegalStateException("Unexpected value: " + condition);

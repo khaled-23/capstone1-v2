@@ -2,6 +2,7 @@ package com.example.capstone1.Service;
 
 import com.example.capstone1.Model.Category;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 
@@ -9,29 +10,36 @@ import java.util.ArrayList;
 public class CategoryService {
     ArrayList<Category> categories = new ArrayList<>();
 
-    public void addCategory(Category category){
+    public String addCategory(Category category, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
         categories.add(category);
+        return "1";
     }
     public ArrayList<Category> getCategories(){
         return categories;
     }
-    public boolean isUpdated(String id, Category category){
+    public String updateCategory(String id, Category category, Errors errors){
+        if(errors.hasErrors()){
+            return "2";
+        }
         for(int i=0; i<categories.size(); i++){
             if(categories.get(i).getId().equalsIgnoreCase(id)){
                 categories.set(i,category);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
-    public boolean isRemoved(String id){
+    public String removeCategory(String id){
         for(int i=0;i<categories.size(); i++){
             if(categories.get(i).getId().equalsIgnoreCase(id)){
                 categories.remove(i);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
 
     public boolean doesCategoryExist(String categoryId) {

@@ -19,11 +19,12 @@ public class CategoryController {
 
     @PostMapping("/add")
     public ResponseEntity addCategory(@RequestBody @Valid Category category, Errors errors){
-        if(errors.hasErrors()){
-            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
-        }
-        categoryService.addCategory(category);
-        return ResponseEntity.status(200).body(new ApiResponse("category added"));
+        String condition = categoryService.addCategory(category, errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("category added"));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @GetMapping("/categories")
@@ -35,20 +36,22 @@ public class CategoryController {
     }
     @PutMapping("/update/{id}")
     public ResponseEntity updateCategory(@PathVariable String id, @RequestBody @Valid Category category, Errors errors){
-        if(errors.hasErrors()){
-            return ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
-        }
-        boolean isUpdated = categoryService.isUpdated(id, category);
-        if(isUpdated){
-            return ResponseEntity.status(200).body(new ApiResponse("category updated: "+id));
-        }else return ResponseEntity.status(400).body(new ApiResponse("category not found: "+id));
+        String condition = categoryService.updateCategory(id, category, errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse("category not found: "+id));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("category updated: "+id));
+            case "2" -> ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteCategory(@PathVariable String id){
-        boolean isRemoved = categoryService.isRemoved(id);
-        if(isRemoved){
-            return ResponseEntity.status(200).body(new ApiResponse("category removed: "+id));
-        }else return ResponseEntity.status(400).body(new ApiResponse("category not found: "+ id));
+        String condition = categoryService.removeCategory(id);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse("category not found: "+ id));
+            case "1" ->ResponseEntity.status(200).body(new ApiResponse("category removed: "+id));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 }

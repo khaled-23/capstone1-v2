@@ -36,9 +36,12 @@ public class CartController {
 
     @DeleteMapping("/remove-item/{userId}/{merchantId}/{productId}")
     public ResponseEntity removeFromCart(@PathVariable String userId, @PathVariable String merchantId, @PathVariable String productId){
-       boolean isRemoved = cartService.removeFromCart(userId,merchantId,productId);
-       if(isRemoved){
-           return ResponseEntity.status(200).body(new ApiResponse("item removed"));
-       }else return ResponseEntity.status(400).body(new ApiResponse("error"));
+       String condition = cartService.removeFromCart(userId,merchantId,productId);
+         return switch (condition) {
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse("error"));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("item removed"));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
+
     }
 }

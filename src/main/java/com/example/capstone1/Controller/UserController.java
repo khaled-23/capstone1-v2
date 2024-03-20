@@ -23,11 +23,12 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity addUser(@RequestBody @Valid User user, Errors errors){
-        if(errors.hasErrors()){
-            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
-        }
-        userService.addUser(user);
-        return ResponseEntity.status(200).body(new ApiResponse("user added"));
+        String condition = userService.addUser(user, errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(errors.getFieldError().getDefaultMessage());
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("user added"));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @GetMapping("/users")
@@ -40,20 +41,22 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateUser(@PathVariable String id, @RequestBody @Valid User user, Errors errors){
-        if(errors.hasErrors()){
-            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
-        }
-        boolean isUpdated = userService.isUpdated(id,user);
-        if(isUpdated){
-            return ResponseEntity.status(200).body(new ApiResponse("user is updated: "+id));
-        }else return ResponseEntity.status(400).body(new ApiResponse("user not found"));
+        String condition = userService.updateUser(id,user, errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("user is updated: "+id));
+            case "2" -> ResponseEntity.status(400).body(new ApiResponse("user not found"));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
     @DeleteMapping("/remove/{id}")
     public ResponseEntity removeUser(@PathVariable String id){
-        boolean isRemoved = userService.isRemoved(id);
-        if(isRemoved){
-            return ResponseEntity.status(200).body("user removed: "+id);
-        }else return ResponseEntity.status(400).body("user not found");
+        String condition = userService.removeUser(id);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body("user not found");
+            case "1" -> ResponseEntity.status(200).body("user removed: "+id);
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @PostMapping("/buy/{userId}/{merchantId}/{productId}")
@@ -80,7 +83,6 @@ public class UserController {
     @PostMapping("/buy/{userId}/{merchantId}/{productId}/{couponKey}")
     public ResponseEntity buyWithCoupon(@PathVariable String userId, @PathVariable String merchantId,
                                              @PathVariable String productId,@PathVariable String couponKey){
-
         String message = userService.buyWithCoupon(userId,merchantId,productId,couponKey);
         return switch (message) {
             case "user does not exists" -> ResponseEntity.status(400).body(new ApiResponse("user not found"));

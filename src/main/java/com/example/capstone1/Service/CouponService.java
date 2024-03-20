@@ -32,6 +32,7 @@ public class CouponService {
         return "2";
     }
 
+    //checks if coupon is for the merchant
     public boolean isCouponValid(String merchantId, String productId, String couponKey) {
         for(Coupon coupon:coupons){
             if(coupon.getMerchantId().equalsIgnoreCase(merchantId)

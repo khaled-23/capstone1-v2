@@ -3,6 +3,7 @@ package com.example.capstone1.Service;
 import com.example.capstone1.Model.Merchant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 
@@ -14,31 +15,38 @@ public class MerchantService {
 
 
 
-    public void addMerchant(Merchant merchant){
+    public String addMerchant(Merchant merchant, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
         merchants.add(merchant);
+        return "1";
     }
     public ArrayList<Merchant> getMerchants(){
         return merchants;
     }
 
-    public boolean isUpdated(String id, Merchant merchant){
+    public String updateMerchant(String id, Merchant merchant, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
         for(int i=0; i<merchants.size(); i++){
             if(merchants.get(i).getId().equalsIgnoreCase(id)){
                 merchants.set(i,merchant);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "2";
     }
-    public boolean isRemoved(String id){
+    public String removeMerchant(String id){
         for(int i=0; i<merchants.size(); i++){
             if(merchants.get(i).getId().equalsIgnoreCase(id)){
                 merchants.remove(i);
                 merchantStockService.remove(id);//remove merchantStock when removing merchant
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
 
 

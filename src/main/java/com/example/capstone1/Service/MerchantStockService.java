@@ -36,24 +36,27 @@ public class MerchantStockService {
         return merchantStocks;
     }
 
-    public boolean isUpdated(String id, MerchantStock merchantStock){
+    public String updateMerchantStock(String id, MerchantStock merchantStock, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
         for(int i=0; i<merchantStocks.size(); i++){
             if(merchantStocks.get(i).getId().equalsIgnoreCase(id)){
                 merchantStocks.set(i,merchantStock);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "2";
     }
 
-    public boolean isRemoved(String id){
+    public String removeMerchantStock(String id){
         for(int i=0; i<merchantStocks.size(); i++){
             if(merchantStocks.get(i).getId().equalsIgnoreCase(id)){
                 merchantStocks.remove(i);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
 
     public boolean doesMerchantAndProductExists(String merchantId, String productId){

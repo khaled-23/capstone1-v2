@@ -22,11 +22,12 @@ public class MerchantController {
 
     @PostMapping("/add")
     public ResponseEntity addMerchant(@RequestBody @Valid Merchant merchant, Errors errors){
-        if(errors.hasErrors()){
-            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
-        }
-        merchantService.addMerchant(merchant);
-        return ResponseEntity.status(200).body(new ApiResponse("merchant added: "+merchant));
+        String condition = merchantService.addMerchant(merchant,errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant added: "+merchant));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @GetMapping("/merchants")
@@ -38,22 +39,24 @@ public class MerchantController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateMerchants(@PathVariable String id, @RequestBody @Valid Merchant merchant, Errors errors){
-        if(errors.hasErrors()){
-            return ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
-        }
-        boolean isUpdated = merchantService.isUpdated(id,merchant);
-        if(isUpdated){
-            return ResponseEntity.status(200).body(new ApiResponse("merchant updated: "+id+" "+merchant));
-        }else return ResponseEntity.status(400).body(new ApiResponse("merchant not found: "+ id));
+    public ResponseEntity updateMerchant(@PathVariable String id, @RequestBody @Valid Merchant merchant, Errors errors){
+        String condition = merchantService.updateMerchant(id,merchant,errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant updated: "+id+" "+merchant));
+            case "2" -> ResponseEntity.status(400).body(new ApiResponse("merchant not found: "+ id));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity removeMerchant(@PathVariable String id){
-        boolean isRemoved = merchantService.isRemoved(id);
-        if(isRemoved){
-            return ResponseEntity.status(200).body(new ApiResponse("merchant removed: "+id));
-        }else return ResponseEntity.status(400).body(new ApiResponse("no merchant with id: "+id));
+        String condition = merchantService.removeMerchant(id);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse("no merchant with id: "+id));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant removed: "+id));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
 

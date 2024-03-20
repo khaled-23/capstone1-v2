@@ -40,18 +40,23 @@ public class MerchantStockController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateMerchantStock(@PathVariable String id, @RequestBody @Valid MerchantStock merchantStock, Errors errors){
-        boolean isUpdated = merchantStockService.isUpdated(id,merchantStock);
-        if(isUpdated){
-            return ResponseEntity.status(200).body(new ApiResponse("merchant stock updated"));
-        }else return ResponseEntity.status(400).body(new ApiResponse("merchant stock not found"));
+        String condition = merchantStockService.updateMerchantStock(id,merchantStock, errors);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body(new ApiResponse(errors.getFieldError().getDefaultMessage()));
+            case "1" -> ResponseEntity.status(200).body(new ApiResponse("merchant stock updated"));
+            case "2" -> ResponseEntity.status(400).body(new ApiResponse("merchant stock not found"));
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @DeleteMapping("/remove/{id}")
     public ResponseEntity removeMerchantStock(@PathVariable String id){
-        boolean isRemoved = merchantStockService.isRemoved(id);
-        if(isRemoved){
-            return ResponseEntity.status(200).body("merchant stock id: "+id+" is removed");
-        }else return ResponseEntity.status(400).body("merchant not found: "+ id);
+        String condition = merchantStockService.removeMerchantStock(id);
+        return switch (condition){
+            case "0" -> ResponseEntity.status(400).body("merchant not found: "+ id);
+            case "1" -> ResponseEntity.status(200).body("merchant stock id: "+id+" is removed");
+            default -> throw new IllegalStateException("Unexpected value: " + condition);
+        };
     }
 
     @PutMapping("add-stock/{merchantId}/{productId}/{stock}")

@@ -41,15 +41,15 @@ public class CartService {
         return userCart;
     }
 
-    public boolean removeFromCart(String userId, String merchantId, String productId) {
+    public String removeFromCart(String userId, String merchantId, String productId) {
         for(int i=0; i<carts.size();i++){
             if(carts.get(i).getUserId().equalsIgnoreCase(userId)
             && carts.get(i).getMerchantId().equalsIgnoreCase(merchantId)
             && carts.get(i).getProduct().getId().equalsIgnoreCase(productId)){
                 carts.remove(i);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
 }

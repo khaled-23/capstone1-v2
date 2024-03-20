@@ -1,39 +1,60 @@
 package com.example.capstone1.Service;
 
 import com.example.capstone1.Model.Product;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 
 import java.util.ArrayList;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
     ArrayList<Product> products = new ArrayList<>();
+    private final CategoryService categoryService;
+    public String addProduct(Product product, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
 
-    public void addProduct(Product product){
+        boolean doesCategoryExist = categoryService.doesCategoryExist(product.getCategoryId());
+        if(!doesCategoryExist){
+            return "2";
+        }
         products.add(product);
+        return "1";
     }
 
     public ArrayList<Product> getProducts(){
         return products;
     }
 
-    public boolean isUpdated(String id, Product product){
+    public String updateProduct(String id, Product product, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
+
+        boolean doesCategoryExist = categoryService.doesCategoryExist(product.getCategoryId());
+        if(!doesCategoryExist){
+            return "2";
+        }
+
         for(int i=0;i<products.size();i++){
             if(products.get(i).getId().equalsIgnoreCase(id)){
                 products.set(i,product);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "3";
     }
-    public boolean isDeleted(String id){
+    public String deleteProduct(String id){
         for(int i=0; i< products.size();i++){
             if(products.get(i).getId().equalsIgnoreCase(id)){
                 products.remove(i);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
     public double getProductPrice(String productId){
         for(int i=0; i<products.size();i++){

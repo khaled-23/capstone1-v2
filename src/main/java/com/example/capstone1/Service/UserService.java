@@ -8,6 +8,7 @@ import com.example.capstone1.Model.UserOrder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
@@ -23,31 +24,38 @@ public class UserService {
     ArrayList<User> users = new ArrayList<>();
 
 
-    public void addUser(User user){
+    public String addUser(User user, Errors errors){
+        if(errors.hasErrors()){
+            return"0";
+        }
         users.add(user);
+        return "1";
     }
 
     public ArrayList<User> getUsers() {
         return users;
     }
 
-    public boolean isUpdated(String id, User user){
+    public String updateUser(String id, User user, Errors errors){
+        if(errors.hasErrors()){
+            return "0";
+        }
         for(int i=0; i<users.size(); i++){
             if(users.get(i).getId().equalsIgnoreCase(id)){
                 users.set(i,user);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "2";
     }
-    public boolean isRemoved(String id){
+    public String removeUser(String id){
         for(int i=0; i<users.size(); i++){
             if(users.get(i).getId().equalsIgnoreCase(id)){
                 users.remove(i);
-                return true;
+                return "1";
             }
         }
-        return false;
+        return "0";
     }
 
     public String buyProduct(String userId, String merchantId, String productId){
